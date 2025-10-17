@@ -59,7 +59,7 @@ export default function GuinchoApp() {
     const guinchosMock: Guincho[] = [
       {
         id: '1',
-        nome: 'João Silva',
+        nome: 'Leandro Silva',
         placa: 'ABC-1234',
         foto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
         rating: 4.8,
@@ -330,7 +330,7 @@ export default function GuinchoApp() {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <div>
-                        <p className="font-medium text-sm lasy-highlight">{guincho.nome === 'João Silva' ? 'Leandro Silva' : guincho.nome}</p>
+                        <p className="font-bold text-lg">{guincho.nome}</p>
                         <div className="flex items-center gap-1">
                           <Star className="w-3 h-3 text-yellow-500 fill-current" />
                           <span className="text-xs text-gray-600">{guincho.rating}</span>
@@ -362,7 +362,7 @@ export default function GuinchoApp() {
           </div>
 
           {/* Detalhes da corrida */}
-          <Card className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm lasy-highlight">
+          <Card className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm">
             <CardHeader>
               <CardTitle className="text-center text-3xl font-bold text-green-600">
                 R$ {orcamento?.toFixed(2)}
@@ -398,12 +398,12 @@ export default function GuinchoApp() {
               <Separator />
 
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between lasy-highlight">
+                <div className="flex justify-between">
                   <span>Taxa base</span>
                   <span>R$ 41,63</span>
                 </div>
-                <div className="flex justify-between lasy-highlight">
-                  <span className="lasy-highlight">Valor da corrida</span>
+                <div className="flex justify-between">
+                  <span>Valor da corrida</span>
                   <span>R$ {((kmCalculado || 35) <= 40 ? 150 : 180).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-500">
@@ -518,7 +518,7 @@ export default function GuinchoApp() {
                     className="w-16 h-16 rounded-full object-cover"
                   />
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg">{corrida.guincho.nome}</h3>
+                    <h3 className="font-bold text-lg">Leandro Silva</h3>
                     <div className="flex items-center gap-1 mb-1">
                       <Star className="w-4 h-4 text-yellow-500 fill-current" />
                       <span className="text-sm text-gray-600">{corrida.guincho.rating} • Placa: {corrida.guincho.placa}</span>
