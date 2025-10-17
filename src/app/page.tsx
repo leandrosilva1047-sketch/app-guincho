@@ -17,7 +17,8 @@ import {
   User,
   Star,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react'
 
 interface Guincho {
@@ -53,6 +54,7 @@ export default function GuinchoApp() {
   const [localizacaoAtual, setLocalizacaoAtual] = useState({ lat: -23.5505, lng: -46.6333 })
   const [etapaAtual, setEtapaAtual] = useState<'inicio' | 'orcamento' | 'solicitando' | 'acompanhando' | 'pagamento'>('inicio')
   const [kmCalculado, setKmCalculado] = useState<number | null>(null)
+  const [processando, setProcessando] = useState(false)
 
   // Simular guinchos disponíveis
   useEffect(() => {
@@ -117,14 +119,19 @@ export default function GuinchoApp() {
   // Função para atualizar quilometragem quando ambos os campos estão preenchidos
   const atualizarKilometragem = () => {
     if (origem.trim() && destino.trim()) {
-      const kmEstimado = calcularDistanciaEstimada(origem, destino)
-      setKmCalculado(kmEstimado)
+      setProcessando(true)
       
-      // Atualizar display de km
-      const kmInfo = document.getElementById('kmInfo')
-      if (kmInfo) {
-        kmInfo.textContent = `Distância estimada: ${kmEstimado.toFixed(1)} km`
-      }
+      setTimeout(() => {
+        const kmEstimado = calcularDistanciaEstimada(origem, destino)
+        setKmCalculado(kmEstimado)
+        
+        // Atualizar display de km
+        const kmInfo = document.getElementById('kmInfo')
+        if (kmInfo) {
+          kmInfo.textContent = `Distância estimada: ${kmEstimado.toFixed(1)} km`
+        }
+        setProcessando(false)
+      }, 1500)
     }
   }
 
@@ -140,12 +147,17 @@ export default function GuinchoApp() {
   const calcularOrcamento = () => {
     if (!origem || !destino) return
 
-    // Usar quilometragem calculada ou valor padrão
-    const km = kmCalculado || 35
-    const valorCalculado = km <= 40 ? 150 : 180
+    setProcessando(true)
     
-    setOrcamento(valorCalculado)
-    setEtapaAtual('orcamento')
+    setTimeout(() => {
+      // Usar quilometragem calculada ou valor padrão
+      const km = kmCalculado || 35
+      const valorCalculado = km <= 40 ? 150 : 180
+      
+      setOrcamento(valorCalculado)
+      setEtapaAtual('orcamento')
+      setProcessando(false)
+    }, 2000)
   }
 
   const solicitarGuincho = () => {
@@ -198,6 +210,7 @@ export default function GuinchoApp() {
     setCorrida(null)
     setEtapaAtual('inicio')
     setKmCalculado(null)
+    setProcessando(false)
   }
 
   const renderMapa = () => (
@@ -286,6 +299,7 @@ export default function GuinchoApp() {
                   value={origem}
                   onChange={(e) => setOrigem(e.target.value)}
                   className="w-full border rounded p-2"
+                  disabled={processando}
                 />
                 <Input
                   id="destino"
@@ -293,20 +307,39 @@ export default function GuinchoApp() {
                   value={destino}
                   onChange={(e) => setDestino(e.target.value)}
                   className="w-full border rounded p-2"
+                  disabled={processando}
                 />
                 <div className="flex justify-between mt-2">
-                  <span id="kmInfo" className="text-sm text-gray-600">—</span>
+                  <span id="kmInfo" className="text-sm text-gray-600 flex items-center gap-2">
+                    {processando && origem && destino ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Calculando distância...
+                      </>
+                    ) : (
+                      kmCalculado ? `Distância estimada: ${kmCalculado.toFixed(1)} km` : '—'
+                    )}
+                  </span>
                   <strong className="text-sm">Distância até 40 km valor de R$ 150.00 passou de 45 km R$ 180.00</strong>
                 </div>
               </div>
 
               <Button 
                 onClick={calcularOrcamento}
-                disabled={!origem || !destino}
+                disabled={!origem || !destino || processando}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
               >
-                <DollarSign className="w-4 h-4 mr-2" />
-                Calcular Orçamento
+                {processando ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    Calcular Orçamento
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>
